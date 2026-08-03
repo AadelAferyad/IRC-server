@@ -1,5 +1,6 @@
 # IRC 
 
+
 What is socket : is an endpoint for communication between two programs running on a network a way of IPC (inter process communication) between to process on a network. And it's a file descriptor
 Core Concepts:
 	IP Address: Identifies the specific machine on the network.
