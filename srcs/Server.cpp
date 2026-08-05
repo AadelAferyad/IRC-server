@@ -35,8 +35,66 @@ void    Server::SetupListeningSocket()
     if (listen(listenFD, SOMAXCONN) == -1)
         throw std::runtime_error("ERROR: Creating Listening socket failed !");
 }
+void    Server::Initpoll()
+{
+    pollfd ListeningSocket;
+
+    ListeningSocket.fd = listenFD;
+    ListeningSocket.events = POLLIN;
+    ListeningSocket.revents = 0;
+
+    pollFds.push_back(ListeningSocket);
+}
+
+void    Server::acceptConnection()
+{
+    sockaddr_in clientAddress;
+    socklen_t clientLength = sizeof(clientAddress);
+    
+    int ClientFD = accept(listenFD, reinterpret_cast<sockaddr*>(&clientAddress), &clientLength);
+    if (ClientFD == -1)
+    {
+        std::cerr << "ERROR: accept function failed !\n";
+        return ;
+    }
+
+    if (fcntl(ClientFD, F_SETFL, O_NONBLOCK) == -1)
+    {
+        close(ClientFD);
+        return;
+    }
+
+    Client *client = new Client(ClientFD);
+    clients[ClientFD] = client;
+    pollfd ClientSocket;
+    ClientSocket.fd = ClientFD;
+    ClientSocket.events = POLLIN;
+    ClientSocket.revents = 0;
+    pollFds.push_back(ClientSocket);
+}
 
 void    Server::run()
 {
     SetupListeningSocket();
+    Initpoll();
+
+    while (1)
+    {
+        int ready = poll(&pollFds[0], pollFds.size(), -1);
+        if (ready == -1)
+            throw std::runtime_error("ERROR: poll function failed !");
+            
+        for (size_t i = 0; i < pollFds.size(); i++)
+        {
+            if (pollFds[i].revents & POLLIN) // to know
+            {
+                if (pollFds[i].fd == listenFD) // to know
+                    acceptConnection();
+                else
+                {
+                    // to do
+                }
+            }
+        }
+    }
 }

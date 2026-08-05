@@ -1,6 +1,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <iostream>
+#include <unistd.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -20,7 +22,11 @@ class Server
         int                         port;
         std::string                 password;
         int                         listenFD;
+
         void                        SetupListeningSocket();
+        void                        Initpoll();
+        void                        acceptConnection();
+
         std::vector<struct pollfd>  pollFds;
         std::map<int, Client*>      clients;
 
