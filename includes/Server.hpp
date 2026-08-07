@@ -30,11 +30,23 @@ class Server
         std::vector<struct pollfd>  pollFds;
         std::map<int, Client*>      clients;
 
+        Dispatcher                  dispatcher;
+
     public:
         Server(int _port, const std::string &_password);
         ~Server();
 
         void    run();
+
+        // cmds handlers
+        void Pass(Client&, const Command&);
+        void Nick(Client&, const Command&);
+        void User(Client&, const Command&);
+        void Join(Client&, const Command&);
+        void Part(Client&, const Command&);
+        void Privmsg(Client&, const Command&);
+        void Quit(Client&, const Command&);
+
 };
 
 
