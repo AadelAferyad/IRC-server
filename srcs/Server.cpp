@@ -98,3 +98,60 @@ void    Server::run()
         }
     }
 }
+
+// cmds 
+
+bool Server::nicknameExists(const std::string& nickname)
+{
+    std::map<int, Client*>::iterator it;
+
+    for (it = clients.begin(); it != clients.end(); it++)
+    {
+        if (it->second->getNickname() == nickname)
+            return true;
+    }
+    return false;
+}
+
+void    Server::checkRegistration(Client& client)
+{
+    if (client.isPassAccepted() && client.isNickReceived() && client.isUserReceived())
+        client.setRegistered(true);
+}
+
+void Server::Pass(Client &client, const Command &command)
+{
+    if (client.isRegistered())
+        return ;
+    if (command.params.empty())
+        return ;
+    if (command.params[0] != password)
+        return ;
+
+    client.setPassAccepted(true);
+    checkRegistration(client);
+}
+
+void Server::Nick(Client &client, const Command &command)
+{
+    if (command.params.empty())
+        return ;
+    if (nicknameExists(command.params[0]))
+        return ;
+    client.setNickname(params[0]);
+    client.setNickReceived(true);
+
+    checkRegistration(client);
+}
+void Server::User(Client &client, const Command &command)
+{
+    if (client.isRegistered())
+        return ;
+    if (command.params.size() < 4)
+        return ;
+    client.setUsername(command.params[0]);
+    client.setRealname(command.params[3]);
+    client.setUserReceived(true);
+
+    checkRegistration(client);
+}

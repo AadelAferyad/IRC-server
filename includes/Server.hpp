@@ -30,8 +30,9 @@ class Server
         std::vector<struct pollfd>  pollFds;
         std::map<int, Client*>      clients;
 
+        //dispatcher part
         Dispatcher                  dispatcher;
-
+        void                        checkRegistration(Client& client);
     public:
         Server(int _port, const std::string &_password);
         ~Server();
@@ -46,7 +47,6 @@ class Server
         void Part(Client&, const Command&);
         void Privmsg(Client&, const Command&);
         void Quit(Client&, const Command&);
-
 };
 
 
