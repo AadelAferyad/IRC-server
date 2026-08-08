@@ -1,6 +1,6 @@
-#include "../../includes/Server.hpp"
+#include "Server.hpp"
 
-void Server::User(Client &client, const Command &command)
+void server::User(Client &client, const Command &command)
 {
     if (client.isRegistered())
         return ;

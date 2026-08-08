@@ -1,6 +1,6 @@
-#include "../../includes/Server.hpp"
+#include "Server.hpp"
 
-void Server::Join(Client& client, const Command& command)
+void server::Join(Client& client, const Command& command)
 {
     if (!client.isRegistered())
         return;

@@ -1,20 +1,20 @@
-#include "../includes/Dispatcher.hpp"
-#include "../includes/Server.hpp"
+#include "Dispatcher.hpp"
+#include "Server.hpp"
 
 Dispatcher::Dispatcher()
 {
-    routes["PASS"]    = &Server::Pass;
-    routes["NICK"]    = &Server::Nick;
-    routes["USER"]    = &Server::User;
-    routes["JOIN"]    = &Server::Join;
-    routes["PART"]    = &Server::Part;
-    routes["PRIVMSG"] = &Server::Privmsg;
-    routes["QUIT"]    = &Server::Quit;
+    routes["PASS"]    = &server::Pass;
+    routes["NICK"]    = &server::Nick;
+    routes["USER"]    = &server::User;
+    routes["JOIN"]    = &server::Join;
+    /*routes["PART"]    = &server::Part;*/
+    /*routes["PRIVMSG"] = &server::Privmsg;*/
+    /*routes["QUIT"]    = &server::Quit;*/
 }
 
 Dispatcher::~Dispatcher() {}
 
-void Dispatcher::dispatchCmd(Server& server, Client& client, const Command& command)
+void Dispatcher::dispatchCmd(server& server, Client& client, const Command& command)
 {
     std::map<std::string, CommandHandler>::iterator it;
     it = routes.find(command.cmd_name);

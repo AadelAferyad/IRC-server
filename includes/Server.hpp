@@ -17,18 +17,22 @@
 #include <csignal>
 #include "Client.hpp"
 #include <string.h>
+#include "Dispatcher.hpp"
+#include "Channel.hpp"
 
-typedef struct command 
+typedef struct Command 
 {
      std::string cmd_name;
-     std::vector<std::string> cmd_params;
+     std::vector<std::string> params;
 } Command;
 
+class Dispatcher;
 class server
 {
 	private:
 		int	socketFd;
 		int	port;
+		std::string	password;
 		std::vector<struct pollfd> fds;
 		std::map<int, Client> clients;
 		Dispatcher                  dispatcher;
@@ -51,10 +55,10 @@ class server
 		void	closeFds();
 		void Pass(Client&, const Command&);
 		void Nick(Client&, const Command&);
+		bool nicknameExists(const std::string&);
 		void User(Client&, const Command&);
 		void Join(Client&, const Command&);
-		void Part(Client&, const Command&);
-		void Privmsg(Client&, const Command&);
-		void Quit(Client&, const Command&);
-
+		/*void Part(Client&, const Command&);*/
+		/*void Privmsg(Client&, const Command&);*/
+		/*void Quit(Client&, const Command&);*/
 };

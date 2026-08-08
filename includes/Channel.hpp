@@ -1,6 +1,8 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
+#include <set>
+#include <iostream>
 
 class Channel
 {
@@ -8,7 +10,7 @@ class Channel
         std::string name;
         std::set<int> clients;
     public:
-        Channel(std::string name);
+        Channel(const std::string &name);
         ~Channel();
 
         const std::string& getName() const;

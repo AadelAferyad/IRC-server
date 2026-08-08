@@ -122,7 +122,8 @@ int	server::readData(int fd)
 	}
 	buff[bytes] = '\0';
 	clients[fd].addBuffer(buff);
-	parse(clients[fd]);
+	std::cout << clients[fd].getBuffer();
+	/*parse(clients[fd]);*/
 	//excute dispatch
 	return 0;
 }
@@ -150,7 +151,7 @@ void	server::closeFds()
 		close(socketFd);
 	std::cout << RED << "Server Disconnected" << WHITE << std::endl;
 }
-void    Server::checkRegistration(Client& client)
+void    server::checkRegistration(Client& client)
 {
     if (client.isPassAccepted() && client.isNickReceived() && client.isUserReceived())
         client.setRegistered(true);

@@ -1,14 +1,9 @@
 #include "Client.hpp"
 
-void	Client::addBuffer(char *str)
-{
-	this->cmdBuffer += str;
-}
+Client::Client(){}
 
-std::string	Client::getBuffer()
-{return (cmdBuffer);}
 
-Client::Client(int fd, const sockaddr_in& address): fd(fd), address(address), passAccepted(false),
+Client::Client(int fd): fd(fd), passAccepted(false),
       nickReceived(false),
       userReceived(false),
       registered(false)
@@ -22,11 +17,10 @@ int Client::getFd() const
     return fd;
 }
 
-sockaddr_in Client::getAddress() const
+void	Client::seter(int fd)
 {
-    return address;
+	fd = fd;
 }
-
 bool Client::isPassAccepted() const
 {
     return passAccepted;
@@ -100,4 +94,16 @@ void Client::setUsername(const std::string& username)
 void Client::setRealname(const std::string& realname)
 {
     this->realname = realname;
+}
+
+void	Client::addBuffer(char *str)
+{
+	this->cmdBuffer += str;
+}
+std::string	Client::getBuffer()
+{return (cmdBuffer);}
+
+int	Client::getClientFd() const
+{
+	return (fd);
 }

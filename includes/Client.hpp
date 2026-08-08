@@ -19,10 +19,13 @@ class	Client
         std::string     buffer;
 	public:
 		Client();
+		Client(int fd);
 		~Client();
 		int	getClientFd() const;
 		void	addBuffer(char *str);
 		std::string	getBuffer();
+		void	closeFds();
+		int	getFd() const;
 		void	seter(int f);
 		bool                isPassAccepted() const;
 		bool                isNickReceived() const;
