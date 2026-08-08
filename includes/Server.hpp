@@ -33,6 +33,7 @@ class Server
         //dispatcher part
         Dispatcher                  dispatcher;
         void                        checkRegistration(Client& client);
+        std::map<std::string, Channel> channels;
     public:
         Server(int _port, const std::string &_password);
         ~Server();
