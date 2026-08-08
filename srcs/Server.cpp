@@ -12,7 +12,6 @@ void	server::initServer()
 {
 	struct pollfd fd;
 	this->port = 4982; //prot from parsing
-	std::cout << "init server" << std::endl;
 	createSocket();
 	configSocket();
 	bindSocket();
@@ -29,7 +28,6 @@ void	server::createSocket()
 	this->socketFd = socket(AF_INET, SOCK_STREAM, 0);	
 	if (this->socketFd == -1)
 		throw std::runtime_error("Failed to create a socket");
-	std::cout << "socket created" << std::endl;
 }
 void	server::configSocket()
 {
@@ -38,8 +36,6 @@ void	server::configSocket()
 		throw std::runtime_error("Failed to make this socket reused (port and address)");
 	if (fcntl(this->socketFd, F_SETFL, O_NONBLOCK) == -1)
 		throw std::runtime_error("Failed to make this socket non blocking socket");
-
-	std::cout << "socket conf" << std::endl;
 }
 
 void	server::bindSocket()
@@ -52,19 +48,18 @@ void	server::bindSocket()
 
 	if (bind(this->socketFd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) == -1)
 		throw std::runtime_error("Failed to bind ip address and port to this socket");
-	std::cout << "socket bind" << std::endl;
 }
 void	server::passiveSocket()
 {
 	if (listen(this->socketFd, SOMAXCONN) == -1)
 		throw std::runtime_error("Failed to convert socket status from bound to liten");
 
-	std::cout << "socket listen" << std::endl;
 }
 
 void	server::run()
 {
-	std::cout << "server running" << std::endl;
+    	std::cout << "\033[2J\033[H" << std::flush;
+	std::cout << GREEN << "			Server created"<< WHITE<< std::endl;
 	while (true)
 	{
 		int ready = poll(&fds[0], fds.size(), -1);
@@ -106,9 +101,10 @@ void	server::acceptNewCLient()
 	fd.events = POLLIN;
 	fd.revents = 0;
 	client.seter(acc);
-	clients.push_back(client);
+	clients[acc] = client;
 	fds.push_back(fd);
-	std::cout << "New client accepted !" << std::endl;
+	
+	std::cout << CYAN << "New Client connecter " << WHITE<< std::endl;
 }
 int	server::readData(int fd)
 {
@@ -119,13 +115,13 @@ int	server::readData(int fd)
 	if (bytes <= 0)
 	{
 		clearClient(fd);
-		std::cout << "CLient Disconnected" << std::endl;
+		std::cout << RED << "CLient Disconnected" << WHITE<< std::endl;
 		close(fd);
 		return (1);
 	}
 	buff[bytes] = '\0';
-	std::cout << buff << std::endl;
-	//parsing valid;
+	clients[fd].addBuffer(buff);
+	std::cout << clients[fd].getBuffer();
 	return 0;
 }
 
@@ -139,15 +135,9 @@ void	server::clearClient(int fd)
 			break ;
 		}
 	}
-	for (size_t i = 0; i < clients.size(); i++)
-	{
-		if (clients[i].getClientFd() == fd)
-		{
-			clients.erase(clients.begin() + i);
-			break ;
-		}
-	}
+	clients.erase(fd);
 }
+
 void	server::closeFds()
 {
 	for (size_t i = 0; i < clients.size(); i++)
@@ -156,4 +146,5 @@ void	server::closeFds()
 	}
 	if (this->socketFd != -1)
 		close(socketFd);
+	std::cout << RED << "Server Disconnected" << WHITE << std::endl;
 }

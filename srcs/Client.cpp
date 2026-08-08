@@ -11,3 +11,11 @@ void	Client::seter(int f)
 {
 	fd = f;
 }
+
+void	Client::addBuffer(char *str)
+{
+	this->cmdBuffer += str;
+}
+
+std::string	Client::getBuffer()
+{return (cmdBuffer);}
