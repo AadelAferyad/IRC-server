@@ -106,9 +106,19 @@ void	server::acceptNewCLient()
 	
 	std::cout << CYAN << "New Client connecter " << WHITE<< std::endl;
 }
+bool	checkCmdIsDone(std::string &str)
+{
+	size_t	size = str.size() - 1;
+
+	if (str[size] == '\n')
+		return (true);
+	return (false);
+}
+
 int	server::readData(int fd)
 {
 	char	buff[1024];
+	Command	cmd;
 
 	memset(buff, 0, sizeof(buff));
 
@@ -122,9 +132,11 @@ int	server::readData(int fd)
 	}
 	buff[bytes] = '\0';
 	clients[fd].addBuffer(buff);
-	std::cout << clients[fd].getBuffer();
-	/*parse(clients[fd]);*/
-	//excute dispatch
+	if (checkCmdIsDone(clients[fd].getBufferi()))
+	{
+		cmd = parse(clients[fd]);
+		//excute dispatch
+	}
 	return 0;
 }
 
