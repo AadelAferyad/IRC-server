@@ -109,6 +109,7 @@ void	server::acceptNewCLient()
 int	server::readData(int fd)
 {
 	char	buff[1024];
+
 	memset(buff, 0, sizeof(buff));
 
 	ssize_t	bytes = recv(fd, buff, sizeof(buff) - 1, 0);
@@ -121,7 +122,8 @@ int	server::readData(int fd)
 	}
 	buff[bytes] = '\0';
 	clients[fd].addBuffer(buff);
-	std::cout << clients[fd].getBuffer();
+	parse(clients[fd]);
+	//excute dispatch
 	return 0;
 }
 
@@ -147,4 +149,10 @@ void	server::closeFds()
 	if (this->socketFd != -1)
 		close(socketFd);
 	std::cout << RED << "Server Disconnected" << WHITE << std::endl;
+}
+
+void    Server::checkRegistration(Client& client)
+{
+    if (client.isPassAccepted() && client.isNickReceived() && client.isUserReceived())
+        client.setRegistered(true);
 }

@@ -17,6 +17,13 @@
 #include <csignal>
 #include "Client.hpp"
 #include <string.h>
+
+typedef struct command 
+{
+     std::string cmd_name;
+     std::vector<std::string> cmd_params;
+} Command;
+
 class server
 {
 	private:
@@ -24,6 +31,9 @@ class server
 		int	port;
 		std::vector<struct pollfd> fds;
 		std::map<int, Client> clients;
+		Dispatcher                  dispatcher;
+		void                        checkRegistration(Client& client);
+		std::map<std::string, Channel> channels;
 	public:
 		server();
 		server(const server &obj);
@@ -39,5 +49,12 @@ class server
 		int	readData(int fd);
 		void	clearClient(int fd);
 		void	closeFds();
+		void Pass(Client&, const Command&);
+		void Nick(Client&, const Command&);
+		void User(Client&, const Command&);
+		void Join(Client&, const Command&);
+		void Part(Client&, const Command&);
+		void Privmsg(Client&, const Command&);
+		void Quit(Client&, const Command&);
 
 };
