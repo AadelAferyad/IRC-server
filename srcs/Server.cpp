@@ -150,7 +150,6 @@ void	server::closeFds()
 		close(socketFd);
 	std::cout << RED << "Server Disconnected" << WHITE << std::endl;
 }
-
 void    Server::checkRegistration(Client& client)
 {
     if (client.isPassAccepted() && client.isNickReceived() && client.isUserReceived())
