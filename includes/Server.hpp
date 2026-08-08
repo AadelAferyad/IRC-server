@@ -28,12 +28,12 @@ class Server
         void                        acceptConnection();
 
         std::vector<struct pollfd>  pollFds;
-        std::map<int, Client*>      clients;
-
         //dispatcher part
         Dispatcher                  dispatcher;
         void                        checkRegistration(Client& client);
+        std::map<int, Client*>      clients;
         std::map<std::string, Channel> channels;
+        
     public:
         Server(int _port, const std::string &_password);
         ~Server();

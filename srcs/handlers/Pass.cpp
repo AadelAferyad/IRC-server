@@ -1,4 +1,4 @@
-#include "../includes/Server.hpp"
+#include "../../includes/Server.hpp"
 
 void Server::Pass(Client &client, const Command &command)
 {
