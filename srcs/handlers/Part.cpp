@@ -15,8 +15,13 @@ void server::Part(Client &client, const Command &command)
     if (!it->second.hasClient(client.getFd()))
         return ;
     
+    bool wasOP = it->second.isOperator(client.getFd());
     it->second.removeClient(client.getFd());
-
     if (it->second.getClients().empty())
+    {
         channels.erase(it);
+        return ;
+    }
+    if (wasOP)
+        it->second.promoteNewOperator();
 }

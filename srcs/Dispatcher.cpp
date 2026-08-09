@@ -12,6 +12,7 @@ Dispatcher::Dispatcher()
     routes["QUIT"]    = &server::Quit;
     routes["TOPIC"]   = &server::Topic;
     routes["INVITE"]  = &server::Invite;
+    routes["KICK"]    = &server::Kick;
 }
 
 Dispatcher::~Dispatcher() {}

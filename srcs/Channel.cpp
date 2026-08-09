@@ -24,6 +24,7 @@ void Channel::addClient(int fd)
 void Channel::removeClient(int fd)
 {
     clients.erase(fd);
+    operators.erase(fd);
 }
 
 bool Channel::hasClient(int fd) const
@@ -64,4 +65,11 @@ void Channel::removeInvite(int fd)
 bool Channel::isInvited(int fd) const
 {
     return invited.find(fd) != invited.end();
+}
+
+void Channel::promoteNewOperator()
+{
+    if (clients.empty())
+        return ;
+    operators.insert(*clients.begin());
 }

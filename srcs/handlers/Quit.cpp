@@ -8,16 +8,22 @@ void server::Quit(Client &client, const Command &command)
 
     while (it != channels.end())
     {
-        if (it->second.hasClient(fd))
+        Channel &channel = it->second;
+        if (channel.hasClient(fd))
         {
-            it->second.removeClient(fd);
-            if (it->second.getClients().empty())
-                channels.erase(it++);
-            else
-                ++it;
+            bool wasOperator = channel.isOperator(fd);
+            channel.removeClient(fd);
+            if (channel.getClients().empty())
+            {
+                std::map<std::string, Channel>::iterator toErase = it;
+                it++;
+                channels.erase(toErase);
+                continue;
+            }
+            if (wasOperator)
+                channel.promoteNewOperator();
         }
-        else
-            ++it;
+        it++;
     }
     clients.erase(fd);
 }

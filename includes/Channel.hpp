@@ -33,6 +33,8 @@ class Channel
         void addInvite(int fd);
         void removeInvite(int fd);
         bool isInvited(int fd) const;
+        
+        void promoteNewOperator();
 };
 
 #endif

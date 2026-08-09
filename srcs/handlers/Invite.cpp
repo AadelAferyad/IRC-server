@@ -19,7 +19,6 @@ void server::Invite(Client &client, const Command &command)
         return ;
 
     std::map<int, Client>::iterator ClientIterator = clients.begin();
-    
     while (ClientIterator != clients.end())
     {
         if (ClientIterator->second.getNickname() == nickname)
