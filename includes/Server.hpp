@@ -62,4 +62,5 @@ class server
 		void Privmsg(Client&, const Command&);
 		void Quit(Client&, const Command&);
 		void Topic(Client&, const Command&);
+		void Invite(Client&, const Command&);
 };

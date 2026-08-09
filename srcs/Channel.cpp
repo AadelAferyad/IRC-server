@@ -35,3 +35,33 @@ const std::set<int>& Channel::getClients() const
 {
     return clients;
 }
+
+void Channel::addOperator(int fd)
+{
+    operators.insert(fd);
+}
+
+void Channel::removeOperator(int fd)
+{
+    operators.erase(fd);
+}
+
+bool Channel::isOperator(int fd) const
+{
+    return operators.find(fd) != operators.end();
+}
+
+void Channel::addInvite(int fd)
+{
+    invited.insert(fd);
+}
+
+void Channel::removeInvite(int fd)
+{
+    invited.erase(fd);
+}
+
+bool Channel::isInvited(int fd) const
+{
+    return invited.find(fd) != invited.end();
+}

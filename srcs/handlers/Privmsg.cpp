@@ -23,7 +23,7 @@ void server::Privmsg(Client &client, const Command &command)
         while (member != members.end())
         {
             if (*member != client.getFd())
-                //send message to *member
+                //send message to every *member
             member++;
         }
     }
@@ -35,7 +35,7 @@ void server::Privmsg(Client &client, const Command &command)
         {
             if (it->second.getNickname() == target)
             {
-                //send message to fd;
+                //send message to specific fd;
                 break;
             }
             it++;

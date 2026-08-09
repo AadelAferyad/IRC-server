@@ -11,6 +11,7 @@ Dispatcher::Dispatcher()
     routes["PRIVMSG"] = &server::Privmsg;
     routes["QUIT"]    = &server::Quit;
     routes["TOPIC"]   = &server::Topic;
+    routes["INVITE"]  = &server::Invite;
 }
 
 Dispatcher::~Dispatcher() {}
