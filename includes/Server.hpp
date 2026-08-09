@@ -5,6 +5,7 @@
 #define GREEN "\e[1;32m"
 #define CYAN "\e[1;36m" 
 #include <iostream>
+#include <sstream>
 #include <vector> 
 #include <map> 
 #include <sys/socket.h>
@@ -53,6 +54,7 @@ class server
 		int	readData(int fd);
 		void	clearClient(int fd);
 		void	closeFds();
+		Command parse(std::string &);
 		void Pass(Client&, const Command&);
 		void Nick(Client&, const Command&);
 		bool nicknameExists(const std::string&);

@@ -23,7 +23,7 @@ class	Client
 		~Client();
 		int	getClientFd() const;
 		void	addBuffer(char *str);
-		std::string	getBuffer();
+		std::string	&getBuffer();
 		void	closeFds();
 		int	getFd() const;
 		void	seter(int f);

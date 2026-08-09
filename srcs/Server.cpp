@@ -106,13 +106,19 @@ void	server::acceptNewCLient()
 	
 	std::cout << CYAN << "New Client connecter " << WHITE<< std::endl;
 }
-bool	checkCmdIsDone(std::string &str)
-{
-	size_t	size = str.size() - 1;
 
-	if (str[size] == '\n')
-		return (true);
-	return (false);
+Command server::parse(std::string &str)
+{
+	Command cmd;
+
+	if (str.empty())
+		return cmd;
+	std::istringstream ss(str);
+	ss >> cmd.cmd_name;
+	std::string	temp;
+	while (ss >> temp)
+		cmd.params.push_back(temp);
+	return (cmd);
 }
 
 int	server::readData(int fd)
@@ -132,10 +138,22 @@ int	server::readData(int fd)
 	}
 	buff[bytes] = '\0';
 	clients[fd].addBuffer(buff);
-	if (checkCmdIsDone(clients[fd].getBufferi()))
+	while (true)
 	{
-		cmd = parse(clients[fd]);
-		//excute dispatch
+		size_t pos = clients[fd].getBuffer().find("\r\n");
+
+		if (pos == std::string::npos)
+			break;
+
+		std::string line = clients[fd].getBuffer().substr(0, pos);
+
+		clients[fd].getBuffer().erase(0, pos + 2);
+	
+		// std::cout << clients[fd].getBuffer()  << std::endl;
+		Command cmd = parse(line);
+
+		std::cout << cmd.cmd_name << " args: "  << std::endl;
+		// dispatcher.dispatchCmd(*this, clients[fd], cmd);
 	}
 	return 0;
 }

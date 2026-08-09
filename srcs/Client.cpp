@@ -17,9 +17,9 @@ int Client::getFd() const
     return fd;
 }
 
-void	Client::seter(int fd)
+void	Client::seter(int f)
 {
-	fd = fd;
+	fd = f;
 }
 bool Client::isPassAccepted() const
 {
@@ -100,7 +100,7 @@ void	Client::addBuffer(char *str)
 {
 	this->cmdBuffer += str;
 }
-std::string	Client::getBuffer()
+std::string	&Client::getBuffer()
 {return (cmdBuffer);}
 
 int	Client::getClientFd() const
