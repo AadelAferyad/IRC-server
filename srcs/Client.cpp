@@ -19,7 +19,7 @@ int Client::getFd() const
 
 void	Client::seter(int fd)
 {
-	fd = fd;
+	this->fd = fd;
 }
 bool Client::isPassAccepted() const
 {
