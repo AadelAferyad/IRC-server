@@ -10,6 +10,7 @@ Dispatcher::Dispatcher()
     routes["PART"]    = &server::Part;
     routes["PRIVMSG"] = &server::Privmsg;
     routes["QUIT"]    = &server::Quit;
+    routes["TOPIC"]   = &server::Topic;
 }
 
 Dispatcher::~Dispatcher() {}

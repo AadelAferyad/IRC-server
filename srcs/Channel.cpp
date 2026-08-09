@@ -7,6 +7,14 @@ const std::string& Channel::getName() const
 {
     return name;
 }
+const std::string& Channel::getTopic() const
+{
+    return topic;
+}
+void Channel::setTopic(const std::string& topic)
+{
+    this->topic = topic;
+}
 
 void Channel::addClient(int fd)
 {

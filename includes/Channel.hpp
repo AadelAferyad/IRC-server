@@ -8,12 +8,15 @@ class Channel
 {
     private:
         std::string name;
+        std::string topic;
         std::set<int> clients;
     public:
         Channel(const std::string &name);
         ~Channel();
 
-        const std::string& getName() const;
+        const std::string &getName() const;
+        const std::string &getTopic() const;
+        void setTopic(const std::string& topic);
 
         void addClient(int fd);
         void removeClient(int fd);

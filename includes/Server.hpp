@@ -61,4 +61,5 @@ class server
 		void Part(Client&, const Command&);
 		void Privmsg(Client&, const Command&);
 		void Quit(Client&, const Command&);
+		void Topic(Client&, const Command&);
 };
