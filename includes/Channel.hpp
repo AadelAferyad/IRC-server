@@ -19,7 +19,7 @@ class Channel
         void removeClient(int fd);
         bool hasClient(int fd) const;
 
-        const std::set<int>& getClients() const;
+        const std::set<int> &getClients() const;
 };
 
 #endif

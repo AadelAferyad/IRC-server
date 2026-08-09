@@ -1,8 +1,8 @@
 #include "Server.hpp"
 
-void Part(Client &client, const Command &command)
+void server::Part(Client &client, const Command &command)
 {
-    if (!client.registered())
+    if (!client.isRegistered())
         return;
     if (command.params.empty())
         return;
@@ -12,10 +12,11 @@ void Part(Client &client, const Command &command)
     
     if (it == channels.end())
         return ;
-    if (!it.second.hasClient(client.getFd()))
+    if (!it->second.hasClient(client.getFd()))
         return ;
     
     it->second.removeClient(client.getFd());
+
     if (it->second.getClients().empty())
         channels.erase(it);
 }

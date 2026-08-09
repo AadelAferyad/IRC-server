@@ -8,7 +8,7 @@ Dispatcher::Dispatcher()
     routes["USER"]    = &server::User;
     routes["JOIN"]    = &server::Join;
     routes["PART"]    = &server::Part;
-    /*routes["PRIVMSG"] = &server::Privmsg;*/
+    routes["PRIVMSG"] = &server::Privmsg;
     routes["QUIT"]    = &server::Quit;
 }
 

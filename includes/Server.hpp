@@ -59,6 +59,6 @@ class server
 		void User(Client&, const Command&);
 		void Join(Client&, const Command&);
 		void Part(Client&, const Command&);
-		/*void Privmsg(Client&, const Command&);*/
-		void Quit(Client&, const Command&);*
+		void Privmsg(Client&, const Command&);
+		void Quit(Client&, const Command&);
 };
