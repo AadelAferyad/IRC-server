@@ -1,6 +1,27 @@
 #include "Server.hpp"
 
 server::server(){};
+bool isValidPort(std::string &str)
+{
+	if (str.empty())
+		return (false);
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		if (!std::isdigit(str[i]))
+			return (false);
+	}
+	long value = std::atol(str.c_str());
+	return (value > 0 && value <= 65535);
+}
+server::server(std::string port, std::string pass)
+{
+	if (!isValidPort(port))
+		throw std::runtime_error("Error invalid port");
+	if (pass.empty())
+		throw std::runtime_error("Error invalid password empty");
+	this->port = std::atoi(port.c_str());
+	this->password = pass;
+}
 server::server(const server &obj) { (void) obj;};
 server &server::operator=(const server &obj)
 {
@@ -11,7 +32,6 @@ server::~server() {};
 void	server::initServer()
 {
 	struct pollfd fd;
-	this->port = 4982; //prot from parsing
 	createSocket();
 	configSocket();
 	bindSocket();
@@ -141,18 +161,11 @@ int	server::readData(int fd)
 	while (true)
 	{
 		size_t pos = clients[fd].getBuffer().find("\r\n");
-
 		if (pos == std::string::npos)
 			break;
-
 		std::string line = clients[fd].getBuffer().substr(0, pos);
-
 		clients[fd].getBuffer().erase(0, pos + 2);
-	
-		// std::cout << clients[fd].getBuffer()  << std::endl;
 		Command cmd = parse(line);
-
-		std::cout << cmd.cmd_name << " args: "  << std::endl;
 		// dispatcher.dispatchCmd(*this, clients[fd], cmd);
 	}
 	return 0;

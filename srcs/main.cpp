@@ -1,16 +1,21 @@
 #include "Server.hpp"
 
 
-int	main(void)
+int	main(int ac, char **av)
 {
-	server srv;
+	if (ac != 3)
+	{
+		std::cerr << "USAGE: ./IRC <port> <password>"<< std::endl;
+		return (1);
+	}
 	try
 	{
+		server srv(av[1], av[2]);
 		srv.initServer();
 	}
 	catch (const std::exception &e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
 	return (0);
 }

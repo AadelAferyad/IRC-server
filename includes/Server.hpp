@@ -6,6 +6,7 @@
 #define CYAN "\e[1;36m" 
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 #include <vector> 
 #include <map> 
 #include <sys/socket.h>
@@ -41,6 +42,7 @@ class server
 		std::map<std::string, Channel> channels;
 	public:
 		server();
+		server(std::string port, std::string pass);
 		server(const server &obj);
 		server &operator=(const server &obj);
 		~server();
