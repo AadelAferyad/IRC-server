@@ -76,22 +76,38 @@ void	server::passiveSocket()
 
 }
 
+void	server::queueMsg(int fd, const std::string &msg)
+{
+	clients[fd].getOutBuffer() += msg;
+	for (size_t i = 0; i < fds.size(); i++)
+	{
+		if (fds[i].fd == fd)
+		{
+			enablePollOut(fds[i]);
+			std::cout << "enabled" << std::endl;
+			break ;
+		}
+	}
+}
+
 void	server::sendData(struct pollfd &fd)
 {
+	std::cout << "sendData fd=" << fd.fd	<< " buffer=[" << clients[fd.fd].getOutBuffer() << "]" << std::endl;
 	if (clients[fd.fd].getOutBuffer().empty())
 	{
-		fd.events &= POLLOUT;
+		fd.events &= ~POLLOUT;
 		return ;
 	}
 	std::string	&buff = clients[fd.fd].getOutBuffer();
 	ssize_t bytes = send(fd.fd, buff.c_str(), buff.size(), 0);
+    	std::cout << "send() returned " << bytes << std::endl;
 	if (bytes < 0)
 	{
 		return ; // ERROR SHOULD BE HANDLED ..
 	}
 	buff.erase(0, bytes);
 	if (buff.empty())
-		fd.events &= POLLOUT;
+		fd.events &= ~POLLOUT;
 }
 
 void	server::run()
@@ -105,8 +121,6 @@ void	server::run()
 			throw std::runtime_error("Failed to execute poll");
 		for (int i = 0; i < static_cast <int> (fds.size()); i++)
 		{
-			if (ready == 0)
-				break ;
 			if (fds[i].revents & POLLIN)
 			{
 				if (fds[i].fd == this->socketFd)
@@ -114,10 +128,10 @@ void	server::run()
 				else
 					if (readData(fds[i].fd))
 						i--;
-				ready--;
 			}
 			if (fds[i].revents & POLLOUT)
-			{
+			{  
+				std::cout << "POLLOUT on fd " << fds[i].fd << std::endl;
 				sendData(fds[i]);
 			}
 		}

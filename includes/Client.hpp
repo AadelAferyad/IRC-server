@@ -43,4 +43,5 @@ class	Client
 		void setUsername(const std::string& username);
 		void setRealname(const std::string& realname);
 		void setBuffer(const std::string& buffer);
+		void	setOutBuffer(const std::string &str);
 };

@@ -71,4 +71,5 @@ class server
 		void Invite(Client&, const Command&);
 		void Kick(Client&, const Command&);
 		void Mode(Client&, const Command&);
+		void	queueMsg(int fd, const std::string &msg);
 };
