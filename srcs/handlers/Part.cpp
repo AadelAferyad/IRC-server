@@ -3,13 +3,23 @@
 void server::Part(Client &client, const Command &command)
 {
     if (!client.isRegistered())
-        return;
+    {
+        sendNumeric(client, ERR_NOTREGISTERED, client.getNickname(), "You have not registered");
+        return ;
+    }
+
     if (command.params.empty())
-        return;
+    {
+        sendNumeric(client, ERR_NEEDMOREPARAMS,
+            client.getNickname() + " PART",
+            "Not enough parameters");
+        return ;
+    }
 
     std::string channelName = command.params[0];
+
     std::map<std::string, Channel>::iterator it = channels.find(channelName);
-    
+
     if (it == channels.end())
     {
         sendNumeric(client, ERR_NOSUCHCHANNEL,
@@ -17,6 +27,7 @@ void server::Part(Client &client, const Command &command)
             "No such channel");
         return ;
     }
+
     if (!it->second.hasClient(client.getFd()))
     {
         sendNumeric(client, ERR_NOTONCHANNEL,
@@ -24,14 +35,30 @@ void server::Part(Client &client, const Command &command)
             "You're not on that channel");
         return ;
     }
-    
-    bool wasOP = it->second.isOperator(client.getFd());
+
+    std::string reply = ":" + client.getNickname() + "!" +
+        client.getUsername() + "@localhost PART " +
+        channelName + "\r\n";
+
+    const std::set<int>& members = it->second.getClients();
+    std::set<int>::const_iterator member = members.begin();
+
+    while (member != members.end())
+    {
+        queueMsg(*member, reply);
+        ++member;
+    }
+
+    bool wasOperator = it->second.isOperator(client.getFd());
+
     it->second.removeClient(client.getFd());
+
     if (it->second.getClients().empty())
     {
         channels.erase(it);
         return ;
     }
-    if (wasOP)
+
+    if (wasOperator)
         it->second.promoteNewOperator();
 }

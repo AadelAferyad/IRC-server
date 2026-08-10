@@ -76,20 +76,23 @@ void	server::passiveSocket()
 
 }
 
-void	server::queueMsg(int fd, const std::string &msg)
+void server::queueMsg(int fd, const std::string &msg)
 {
+    std::map<int, Client>::iterator it = clients.find(fd);
 
-	clients[fd].getOutBuffer() += msg;
+    if (it == clients.end())
+        return ;
 
-	for (size_t i = 0; i < fds.size(); i++)
-	{
-		if (fds[i].fd == fd)
-		{
-			enablePollOut(fds[i]);
+    it->second.getOutBuffer() += msg;
 
-			break ;
-		}
-	}
+    for (size_t i = 0; i < fds.size(); i++)
+    {
+        if (fds[i].fd == fd)
+        {
+            enablePollOut(fds[i]);
+            break ;
+        }
+    }
 }
 
 void	server::sendData(struct pollfd &fd)
@@ -111,33 +114,58 @@ void	server::sendData(struct pollfd &fd)
 		fd.events &= ~POLLOUT;
 }
 
-void	server::run()
+void server::run()
 {
-    	std::cout << "\033[2J\033[H" << std::flush;
-	std::cout << GREEN << "			Server created"<< WHITE<< std::endl;
-	while (true)
-	{
-		int ready = poll(&fds[0], fds.size(), -1);
-		if (ready == -1)
-			throw std::runtime_error("Failed to execute poll");
-		for (int i = 0; i < static_cast <int> (fds.size()); i++)
-		{
-			if (fds[i].revents & POLLIN)
-			{
-				if (fds[i].fd == this->socketFd)
-					acceptNewCLient();
-				else
-					if (readData(fds[i].fd))
-						i--;
-			}
-			if (fds[i].revents & POLLOUT)
-			{  
-				std::cout << "POLLOUT on fd " << fds[i].fd << std::endl;
-				sendData(fds[i]);
-			}
-		}
-	}
-	closeFds();
+    std::cout << "\033[2J\033[H" << std::flush;
+    std::cout << GREEN << "			Server created" << WHITE << std::endl;
+
+    while (true)
+    {
+        int ready = poll(&fds[0], fds.size(), -1);
+
+        if (ready == -1)
+            throw std::runtime_error("Failed to execute poll");
+
+        for (size_t i = 0; i < fds.size();)
+        {
+            if (fds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
+            {
+                int fd = fds[i].fd;
+
+                if (fd != this->socketFd)
+                {
+                    clearClient(fd);
+                    close(fd);
+                    continue;
+                }
+            }
+
+            if (fds[i].revents & POLLIN)
+            {
+                if (fds[i].fd == this->socketFd)
+                {
+                    acceptNewCLient();
+                }
+                else
+                {
+                    int fd = fds[i].fd;
+
+                    if (readData(fd))
+                        continue;
+                }
+            }
+
+            if (i >= fds.size())
+                break;
+
+            if (fds[i].revents & POLLOUT)
+                sendData(fds[i]);
+
+            ++i;
+        }
+    }
+
+    closeFds();
 }
 
 void	server::acceptNewCLient()
@@ -166,16 +194,36 @@ void	server::acceptNewCLient()
 
 Command server::parse(std::string &str)
 {
-	Command cmd;
+    Command cmd;
 
-	if (str.empty())
-		return cmd;
-	std::istringstream ss(str);
-	ss >> cmd.cmd_name;
-	std::string	temp;
-	while (ss >> temp)
-		cmd.params.push_back(temp);
-	return (cmd);
+    if (str.empty())
+        return cmd;
+
+    std::istringstream ss(str);
+    ss >> cmd.cmd_name;
+
+    std::string param;
+
+    while (ss >> param)
+    {
+        if (param[0] == ':')
+        {
+            std::string trailing = param.substr(1);
+            std::string rest;
+
+            std::getline(ss, rest);
+
+            if (!rest.empty())
+                trailing += rest;
+
+            cmd.params.push_back(trailing);
+            break ;
+        }
+
+        cmd.params.push_back(param);
+    }
+
+    return cmd;
 }
 
 int	server::readData(int fd)
@@ -208,17 +256,40 @@ int	server::readData(int fd)
 	return 0;
 }
 
-void	server::clearClient(int fd)
+void server::clearClient(int fd)
 {
-	for (size_t i = 0; i < fds.size(); i++)
-	{
-		if (fds[i].fd == fd)
-		{
-			fds.erase(fds.begin() + i);
-			break ;
-		}
-	}
-	clients.erase(fd);
+    for (std::map<std::string, Channel>::iterator it = channels.begin();
+        it != channels.end();)
+    {
+        bool wasOperator = it->second.isOperator(fd);
+
+        it->second.removeClient(fd);
+        it->second.removeInvite(fd);
+
+        if (it->second.getClients().empty())
+        {
+            std::map<std::string, Channel>::iterator toErase = it;
+            ++it;
+            channels.erase(toErase);
+        }
+        else
+        {
+            if (wasOperator)
+                it->second.promoteNewOperator();
+            ++it;
+        }
+    }
+
+    for (size_t i = 0; i < fds.size(); ++i)
+    {
+        if (fds[i].fd == fd)
+        {
+            fds.erase(fds.begin() + i);
+            break;
+        }
+    }
+
+    clients.erase(fd);
 }
 
 void server::enablePollOut(struct pollfd &fd)

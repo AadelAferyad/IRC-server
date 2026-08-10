@@ -1,6 +1,14 @@
 #include "Client.hpp"
 
-Client::Client(){}
+
+Client::Client()
+    : fd(-1),
+      passAccepted(false),
+      nickReceived(false),
+      userReceived(false),
+      registered(false)
+{
+}
 
 
 Client::Client(int fd): fd(fd), passAccepted(false),

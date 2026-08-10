@@ -3,11 +3,19 @@
 void server::Join(Client &client, const Command &command)
 {
     if (!client.isRegistered())
+    {
+        sendNumeric(client, ERR_NOTREGISTERED, client.getNickname(), "You have not registered");
         return ;
-    if (command.params.empty())
-        return ;
-
+    }
     std::string channelName = command.params[0];
+    if (channelName.empty() || channelName[0] != '#')
+    {
+        sendNumeric(client, ERR_NOSUCHCHANNEL,
+            client.getNickname() + " " + channelName,
+            "No such channel");
+        return ;
+    }
+
     std::map<std::string, Channel>::iterator it = channels.find(channelName);
 
     if (it == channels.end())
@@ -17,7 +25,9 @@ void server::Join(Client &client, const Command &command)
         it->second.addClient(client.getFd());
         it->second.addOperator(client.getFd());
 
-        std::string reply = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost JOIN " + channelName + "\r\n";
+        std::string reply = ":" + client.getNickname() + "!" +
+            client.getUsername() + "@localhost JOIN " + channelName + "\r\n";
+
         queueMsg(client.getFd(), reply);
 
         std::string names = "@" + client.getNickname();
@@ -66,12 +76,20 @@ void server::Join(Client &client, const Command &command)
     if (it->second.isInviteOnly())
         it->second.removeInvite(client.getFd());
 
-    std::string reply = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost JOIN " + channelName + "\r\n";
-    queueMsg(client.getFd(), reply);
+    std::string reply = ":" + client.getNickname() + "!" +
+        client.getUsername() + "@localhost JOIN " + channelName + "\r\n";
 
-    std::string names;
     const std::set<int>& members = it->second.getClients();
     std::set<int>::const_iterator member = members.begin();
+
+    while (member != members.end())
+    {
+        queueMsg(*member, reply);
+        ++member;
+    }
+
+    std::string names;
+    member = members.begin();
 
     while (member != members.end())
     {
@@ -81,12 +99,18 @@ void server::Join(Client &client, const Command &command)
         {
             if (it->second.isOperator(*member))
                 names += "@";
+
             names += clientIt->second.getNickname();
             names += " ";
         }
+
         ++member;
     }
 
-    sendNumeric(client, RPL_NAMREPLY, client.getNickname() + " = " + channelName, names);
-    sendNumeric(client, RPL_ENDOFNAMES, client.getNickname() + " " + channelName, "End of /NAMES list.");
+    sendNumeric(client, RPL_NAMREPLY,
+        client.getNickname() + " = " + channelName, names);
+
+    sendNumeric(client, RPL_ENDOFNAMES,
+        client.getNickname() + " " + channelName,
+        "End of /NAMES list.");
 }
