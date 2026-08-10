@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name) : name(name), inviteOnly(false), topicRestricted(false), keyProtected(false) {}
+Channel::Channel(const std::string& name) : name(name), key(""), userLimit(0), inviteOnly(false), topicRestricted(false), keyProtected(false), hasUserLimit(false) {}
 Channel::~Channel() {}
 
 const std::string& Channel::getName() const
@@ -99,7 +99,41 @@ bool Channel::isKeyProtected() const
     return keyProtected;
 }
 
-void Channel::setKeyProtected(bool value)
+void Channel::setKey(const std::string &newKey)
 {
-    keyProtected = value;
+    key = newKey;
+    keyProtected = true;
+}
+
+void Channel::removeKey()
+{
+    key.clear();
+    keyProtected = false;
+}
+
+bool Channel::checkKey(const std::string &providedKey) const
+{
+    return key == providedKey;
+}
+
+bool Channel::isUserLimit() const
+{
+    return hasUserLimit;
+}
+
+int Channel::getUserLimit() const
+{
+    return userLimit;
+}
+
+void Channel::setUserLimit(int limit)
+{
+    userLimit = limit;
+    hasUserLimit = true;
+}
+
+void Channel::removeUserLimit()
+{
+    userLimit = 0;
+    hasUserLimit = false;
 }

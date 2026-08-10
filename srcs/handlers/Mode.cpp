@@ -17,23 +17,82 @@ void server::Mode(Client &client, const Command &command)
         return ;
     if (!channelIt->second.isOperator(client.getFd()))
         return ;
-    if ((mode == "+o" || mode == "-o") && command.params.size() < 3)
+    // +i & -i
+    if (mode == "+i")
+    {
+        channelIt->second.setInviteOnly(true);
         return ;
+    }
+    if (mode == "-i")
+    {
+        channelIt->second.setInviteOnly(false);
+        return ;
+    }
+    // +t & -t
+    if (mode == "+t")
+    {
+        channelIt->second.setTopicRestricted(true);
+        return ;
+    }
+
+    if (mode == "-t")
+    {
+        channelIt->second.setTopicRestricted(false);
+        return ;
+    }
+    // +k & -k
+    if (mode == "+k")
+    {
+        if (command.params.size() < 3)
+            return ;
+
+        std::string key = command.params[2];
+
+        if (key.empty())
+            return ;
+
+        channelIt->second.setKey(key);
+        return ;
+    }
+    if (mode == "-k")
+    {
+        channelIt->second.removeKey();
+        return ;
+    }
+    // +l & -l
+    if (mode == "+l")
+    {
+        if (command.params.size() < 3)
+            return ;
+        int limit = std::atoi(command.params[2].c_str());
+        if (limit <= 0)
+            return ;
+        channelIt->second.setUserLimit(limit);
+        return ;
+    }
+    if (mode == "-l")
+    {
+        channelIt->second.removeUserLimit();
+        return ;
+    }
+    // +o & -o
     if (mode != "+o" && mode != "-o")
+        return ;
+    if (command.params.size() < 3)
         return ;
 
     std::string nickname = command.params[2];
-    std::map<int, Client>::iterator clientIt = clients.begin();
-    while (clientIt != clients.end())
+    std::map<int, Client>::iterator clientIterator = clients.begin();
+    while (clientIterator != clients.end())
     {
-        if (clientIt->second.getNickname() == nickname)
+        if (clientIterator->second.getNickname() == nickname)
             break ;
-        ++clientIt;
+        ++clientIterator;
     }
-    if (clientIt == clients.end())
+    if (clientIterator == clients.end())
         return ;
 
-    int targetFd = clientIt->second.getFd();
+    int targetFd = clientIterator->second.getFd();
     if (!channelIt->second.hasClient(targetFd))
         return ;
     if (mode == "+o")

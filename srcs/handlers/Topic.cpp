@@ -16,8 +16,13 @@ void server::Topic(Client &client, const Command &command)
 
     if (command.params.size() == 1)
     {
-        // broadcast current topic back to client
+        // send current topic back to client
         return ;
+    }
+    if (it->second.isTopicRestricted())
+    {
+        if (!it->second.isOperator(client.getFd()))
+            return ;
     }
     std::string topic = command.params[1];
     it->second.setTopic(topic);

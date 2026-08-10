@@ -9,9 +9,12 @@ class Channel
     private:
         std::string name;
         std::string topic;
+        std::string key;
+        int userLimit;
         bool inviteOnly;
         bool topicRestricted;
         bool keyProtected;
+        bool hasUserLimit;
         std::set<int> clients;
         std::set<int> operators;
         std::set<int> invited;
@@ -28,7 +31,7 @@ class Channel
         bool hasClient(int fd) const;
 
         const std::set<int> &getClients() const;
-        
+
         void promoteNewOperator();
 
         void addOperator(int fd);
@@ -46,7 +49,15 @@ class Channel
         void setTopicRestricted(bool enabled);
 
         bool isKeyProtected() const;
-        void setKeyProtected(bool enabled);
+        void setKey(const std::string &key);
+        void removeKey();
+        bool checkKey(const std::string &key) const;
+
+        bool isUserLimit() const;
+        int getUserLimit() const;
+
+        void setUserLimit(int limit);
+        void removeUserLimit();
 };
 
 #endif
