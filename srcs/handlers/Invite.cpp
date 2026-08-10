@@ -12,11 +12,27 @@ void server::Invite(Client &client, const Command &command)
     std::map<std::string, Channel>::iterator ChannelIterator = channels.find(channelName);
 
     if (ChannelIterator == channels.end())
+    {
+        sendNumeric(client, ERR_NOSUCHCHANNEL,
+            client.getNickname() + " " + channelName,
+            "No such channel");
         return ;
+    }
     if (!ChannelIterator->second.hasClient(client.getFd()))
+    {
+        sendNumeric(client, ERR_NOTONCHANNEL,
+            client.getNickname() + " " + channelName,
+            "You're not on that channel");
         return ;
-    if (!ChannelIterator->second.isOperator(client.getFd()))
+    }
+    if (ChannelIterator->second.isInviteOnly() &&
+        !ChannelIterator->second.isOperator(client.getFd()))
+    {
+        sendNumeric(client, ERR_CHANOPRIVSNEEDED,
+            client.getNickname() + " " + channelName,
+            "You're not channel operator");
         return ;
+    }
 
     std::map<int, Client>::iterator ClientIterator = clients.begin();
     while (ClientIterator != clients.end())

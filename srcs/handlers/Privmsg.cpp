@@ -14,9 +14,19 @@ void server::Privmsg(Client &client, const Command &command)
     {
         std::map<std::string, Channel>::iterator it = channels.find(target);
         if (it == channels.end())
+        {
+            sendNumeric(client, ERR_NOSUCHCHANNEL,
+                client.getNickname() + " " + target,
+                "No such channel");
             return ;
+        }
         if (!it->second.hasClient(client.getFd()))
+        {
+            sendNumeric(client, ERR_CANNOTSENDTOCHAN,
+                client.getNickname() + " " + target,
+                "Cannot send to channel");
             return ;
+        }
 
         const std::set<int>& members = it->second.getClients();
         std::set<int>::const_iterator member = members.begin();
@@ -38,7 +48,15 @@ void server::Privmsg(Client &client, const Command &command)
                 //send message to specific fd;
                 break;
             }
+            
             it++;
+        }
+        if (it == clients.end())
+        {
+            sendNumeric(client, ERR_NOSUCHNICK,
+                client.getNickname() + " " + target,
+                "No such nick");
+            return ;
         }
     }
 }

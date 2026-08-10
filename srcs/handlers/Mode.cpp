@@ -16,7 +16,23 @@ void server::Mode(Client &client, const Command &command)
     if (!channelIt->second.hasClient(client.getFd()))
         return ;
     if (!channelIt->second.isOperator(client.getFd()))
+    {
+        sendNumeric(client, ERR_CHANOPRIVSNEEDED,
+            client.getNickname() + " " + channelName,
+            "You're not channel operator");
         return ;
+    }
+    if (mode != "+i" && mode != "-i" &&
+    mode != "+t" && mode != "-t" &&
+    mode != "+k" && mode != "-k" &&
+    mode != "+l" && mode != "-l" &&
+    mode != "+o" && mode != "-o")
+    {
+        sendNumeric(client, ERR_UNKNOWNMODE,
+            client.getNickname() + " " + mode,
+            "Unknown MODE flag");
+        return ;
+    }
     // +i & -i
     if (mode == "+i")
     {
@@ -89,12 +105,21 @@ void server::Mode(Client &client, const Command &command)
             break ;
         ++clientIterator;
     }
-    if (clientIterator == clients.end())
+    if (channelIt == channels.end())
+    {
+        sendNumeric(client, ERR_NOSUCHCHANNEL,
+            client.getNickname() + " " + channelName,
+            "No such channel");
         return ;
-
+    }
     int targetFd = clientIterator->second.getFd();
-    if (!channelIt->second.hasClient(targetFd))
+    if (!channelIt->second.hasClient(client.getFd()))
+    {
+        sendNumeric(client, ERR_NOTONCHANNEL,
+            client.getNickname() + " " + channelName,
+            "You're not on that channel");
         return ;
+    }
     if (mode == "+o")
         channelIt->second.addOperator(targetFd);
     else if (mode == "-o")

@@ -78,20 +78,15 @@ void	server::passiveSocket()
 
 void	server::queueMsg(int fd, const std::string &msg)
 {
-	    std::cout << "queueMsg() FD=" << fd
-              << " message=[" << msg << "]" << std::endl;
 
 	clients[fd].getOutBuffer() += msg;
-	    std::cout << "outBuffer=[" 
-              << clients[fd].getOutBuffer() << "]" << std::endl;
+
 	for (size_t i = 0; i < fds.size(); i++)
 	{
 		if (fds[i].fd == fd)
 		{
 			enablePollOut(fds[i]);
 
-            std::cout << "POLLOUT enabled for FD="
-                      << fd << std::endl;
 			break ;
 		}
 	}
@@ -99,7 +94,6 @@ void	server::queueMsg(int fd, const std::string &msg)
 
 void	server::sendData(struct pollfd &fd)
 {
-	std::cout << "sendData fd=" << fd.fd	<< " buffer=[" << clients[fd.fd].getOutBuffer() << "]" << std::endl;
 	if (clients[fd.fd].getOutBuffer().empty())
 	{
 		fd.events &= ~POLLOUT;
@@ -242,10 +236,15 @@ void	server::closeFds()
 		close(socketFd);
 	std::cout << RED << "Server Disconnected" << WHITE << std::endl;
 }
-void    server::checkRegistration(Client& client)
+
+void server::checkRegistration(Client& client)
 {
     if (client.isPassAccepted() && client.isNickReceived() && client.isUserReceived())
+    {
         client.setRegistered(true);
+
+        sendNumeric(client, RPL_WELCOME, client.getNickname(), "Welcome to the IRC server");
+    }
 }
 
 void server::sendNumeric(Client &client, int numeric, const std::string &params, const std::string &message)
