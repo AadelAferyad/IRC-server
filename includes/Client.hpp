@@ -5,8 +5,8 @@
 class	Client
 {
 	private:
-		int	fd;
-		std::string cmdBuffer;
+		int				fd;
+		std::string		cmdBuffer;
 		bool            passAccepted;
 		bool            nickReceived;
 		bool            userReceived;
@@ -16,18 +16,18 @@ class	Client
 		std::string     username;
 		std::string     realname;
 
-	        std::string     outBuffer;
+	    std::string     outBuffer;
 	public:
 		Client();
 		Client(int fd);
 		~Client();
-		int	getClientFd() const;
-		void	addBuffer(char *str);
-		std::string	&getBuffer();
-		std::string	&getOutBuffer();
-		void	closeFds();
-		int	getFd() const;
-		void	seter(int f);
+		int					getClientFd() const;
+		void				addBuffer(char *str);
+		void				closeFds();
+		// getters
+		std::string			&getBuffer();
+		std::string			&getOutBuffer();
+		int					getFd() const;
 		bool                isPassAccepted() const;
 		bool                isNickReceived() const;
 		bool                isUserReceived() const;
@@ -35,13 +35,15 @@ class	Client
 		std::string         getNickname() const;
 		std::string         getUsername() const;
 		std::string         getRealname() const;
-		void setPassAccepted(bool value);
-		void setNickReceived(bool value);
-		void setUserReceived(bool value);
-		void setRegistered(bool value);
-		void setNickname(const std::string& nickname);
-		void setUsername(const std::string& username);
-		void setRealname(const std::string& realname);
-		void setBuffer(const std::string& buffer);
-		void	setOutBuffer(const std::string &str);
+		// setters
+		void				seter(int f);
+		void 				setPassAccepted(bool value);
+		void 				setNickReceived(bool value);
+		void 				setUserReceived(bool value);
+		void 				setRegistered(bool value);
+		void 				setNickname(const std::string& nickname);
+		void 				setUsername(const std::string& username);
+		void 				setRealname(const std::string& realname);
+		void 				setBuffer(const std::string& buffer);
+		void				setOutBuffer(const std::string &str);
 };

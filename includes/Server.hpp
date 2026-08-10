@@ -34,20 +34,22 @@ class Dispatcher;
 class server
 {
 	private:
-		int	socketFd;
-		int	port;
-		std::string	password;
-		std::vector<struct pollfd> fds;
-		std::map<int, Client> clients;
-		Dispatcher                  dispatcher;
-		void                        checkRegistration(Client& client);
-		std::map<std::string, Channel> channels;
+		int								socketFd;
+		int								port;
+		std::string						password;
+		std::vector<struct pollfd> 		fds;
+		std::map<int, Client> 			clients;
+		std::map<std::string, Channel>	channels;
+		// dispatcher part
+		Dispatcher                  	dispatcher;
+		void                        	checkRegistration(Client& client);
 	public:
 		server();
 		server(std::string port, std::string pass);
 		server(const server &obj);
 		server &operator=(const server &obj);
 		~server();
+
 		void	initServer();
 		void	createSocket();
 		void	configSocket();
@@ -55,25 +57,27 @@ class server
 		void	passiveSocket();
 		void	run();
 		void	acceptNewCLient();
-		int	readData(int fd);
+		int		readData(int fd);
 		void	clearClient(int fd);
 		void	closeFds();
-		Command parse(std::string &);
-		void Pass(Client&, const Command&);
-		void Nick(Client&, const Command&);
-		bool nicknameExists(const std::string&);
-		void User(Client&, const Command&);
-		void Join(Client&, const Command&);
-		void enablePollOut(struct pollfd &fd);
-		void sendData(struct pollfd &fd);
-		void Part(Client&, const Command&);
-		void Privmsg(Client&, const Command&);
-		void Quit(Client&, const Command&);
-		void Topic(Client&, const Command&);
-		void Invite(Client&, const Command&);
-		void Kick(Client&, const Command&);
-		void Mode(Client&, const Command&);
-		void	queueMsg(int fd, const std::string &msg);
+		Command	parse(std::string &);
+		void	enablePollOut(struct pollfd &fd);
+		void	sendData(struct pollfd &fd);
 
-		void sendNumeric(Client &client, int numeric, const std::string &params, const std::string &message);
+		// cmd handlers
+		void 	Pass(Client&, const Command&);
+		void 	Nick(Client&, const Command&);
+		bool 	nicknameExists(const std::string&);
+		void 	User(Client&, const Command&);
+		void 	Join(Client&, const Command&);
+		void 	Part(Client&, const Command&);
+		void 	Privmsg(Client&, const Command&);
+		void 	Quit(Client&, const Command&);
+		void 	Topic(Client&, const Command&);
+		void 	Invite(Client&, const Command&);
+		void 	Kick(Client&, const Command&);
+		void 	Mode(Client&, const Command&);
+
+		void	queueMsg(int fd, const std::string &msg);
+		void	sendNumeric(Client &client, int numeric, const std::string &params, const std::string &message);
 };
