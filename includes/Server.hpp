@@ -6,6 +6,7 @@
 #define CYAN "\e[1;36m" 
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include <cstdlib>
 #include <vector> 
 #include <map> 
@@ -21,6 +22,7 @@
 #include <string.h>
 #include "Dispatcher.hpp"
 #include "Channel.hpp"
+#include "Numeric.hpp"
 
 typedef struct Command 
 {
@@ -72,4 +74,6 @@ class server
 		void Kick(Client&, const Command&);
 		void Mode(Client&, const Command&);
 		void	queueMsg(int fd, const std::string &msg);
+
+		void sendNumeric(Client &client, int numeric, const std::string &params, const std::string &message);
 };

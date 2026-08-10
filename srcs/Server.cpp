@@ -78,13 +78,20 @@ void	server::passiveSocket()
 
 void	server::queueMsg(int fd, const std::string &msg)
 {
+	    std::cout << "queueMsg() FD=" << fd
+              << " message=[" << msg << "]" << std::endl;
+
 	clients[fd].getOutBuffer() += msg;
+	    std::cout << "outBuffer=[" 
+              << clients[fd].getOutBuffer() << "]" << std::endl;
 	for (size_t i = 0; i < fds.size(); i++)
 	{
 		if (fds[i].fd == fd)
 		{
 			enablePollOut(fds[i]);
-			std::cout << "enabled" << std::endl;
+
+            std::cout << "POLLOUT enabled for FD="
+                      << fd << std::endl;
 			break ;
 		}
 	}
@@ -239,4 +246,15 @@ void    server::checkRegistration(Client& client)
 {
     if (client.isPassAccepted() && client.isNickReceived() && client.isUserReceived())
         client.setRegistered(true);
+}
+
+void server::sendNumeric(Client &client, int numeric, const std::string &params, const std::string &message)
+{
+    std::ostringstream oss;
+
+    oss << ":server " << std::setfill('0') << std::setw(3) << numeric << " " << params;
+    if (!message.empty())
+        oss << " :" << message;
+    oss << "\r\n";
+    queueMsg(client.getFd(), oss.str());
 }
