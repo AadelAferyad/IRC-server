@@ -76,6 +76,24 @@ void	server::passiveSocket()
 
 }
 
+void	server::sendData(struct pollfd &fd)
+{
+	if (clients[fd.fd].getOutBuffer().empty())
+	{
+		fd.events &= POLLOUT;
+		return ;
+	}
+	std::string	&buff = clients[fd.fd].getOutBuffer();
+	ssize_t bytes = send(fd.fd, buff.c_str(), buff.size(), 0);
+	if (bytes < 0)
+	{
+		return ; // ERROR SHOULD BE HANDLED ..
+	}
+	buff.erase(0, bytes);
+	if (buff.empty())
+		fd.events &= POLLOUT;
+}
+
 void	server::run()
 {
     	std::cout << "\033[2J\033[H" << std::flush;
@@ -97,6 +115,10 @@ void	server::run()
 					if (readData(fds[i].fd))
 						i--;
 				ready--;
+			}
+			if (fds[i].revents & POLLOUT)
+			{
+				sendData(fds[i]);
 			}
 		}
 	}
@@ -166,7 +188,7 @@ int	server::readData(int fd)
 		std::string line = clients[fd].getBuffer().substr(0, pos);
 		clients[fd].getBuffer().erase(0, pos + 2);
 		Command cmd = parse(line);
-		// dispatcher.dispatchCmd(*this, clients[fd], cmd);
+		dispatcher.dispatchCmd(*this, clients[fd], cmd);
 	}
 	return 0;
 }
@@ -182,6 +204,11 @@ void	server::clearClient(int fd)
 		}
 	}
 	clients.erase(fd);
+}
+
+void server::enablePollOut(struct pollfd &fd)
+{
+	fd.events |= POLLOUT;
 }
 
 void	server::closeFds()

@@ -16,7 +16,7 @@ class	Client
 		std::string     username;
 		std::string     realname;
 
-        std::string     buffer;
+	        std::string     outBuffer;
 	public:
 		Client();
 		Client(int fd);
@@ -24,6 +24,7 @@ class	Client
 		int	getClientFd() const;
 		void	addBuffer(char *str);
 		std::string	&getBuffer();
+		std::string	&getOutBuffer();
 		void	closeFds();
 		int	getFd() const;
 		void	seter(int f);
@@ -34,7 +35,6 @@ class	Client
 		std::string         getNickname() const;
 		std::string         getUsername() const;
 		std::string         getRealname() const;
-		std::string         getBuffer() const;
 		void setPassAccepted(bool value);
 		void setNickReceived(bool value);
 		void setUserReceived(bool value);

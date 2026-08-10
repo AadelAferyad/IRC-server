@@ -56,10 +56,6 @@ std::string Client::getRealname() const
     return realname;
 }
 
-std::string Client::getBuffer() const
-{
-    return buffer;
-}
 
 void Client::setPassAccepted(bool value)
 {
@@ -106,4 +102,9 @@ std::string	&Client::getBuffer()
 int	Client::getClientFd() const
 {
 	return (fd);
+}
+
+std::string	&Client::getOutBuffer()
+{
+	return (outBuffer);
 }
