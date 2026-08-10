@@ -13,6 +13,7 @@ Dispatcher::Dispatcher()
     routes["TOPIC"]   = &server::Topic;
     routes["INVITE"]  = &server::Invite;
     routes["KICK"]    = &server::Kick;
+    routes["MODE"]    = &server::Mode;
 }
 
 Dispatcher::~Dispatcher() {}

@@ -12,6 +12,7 @@ SOURCE =	srcs/main.cpp srcs/Server.cpp srcs/Client.cpp srcs/Dispatcher.cpp srcs/
 			srcs/handlers/Topic.cpp \
 			srcs/handlers/Invite.cpp \
 			srcs/handlers/Kick.cpp \
+			srcs/handlers/Mode.cpp \
 
 OBJ = $(SOURCE:.cpp=.o)
 all: $(NAME)

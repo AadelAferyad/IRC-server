@@ -70,4 +70,5 @@ class server
 		void Topic(Client&, const Command&);
 		void Invite(Client&, const Command&);
 		void Kick(Client&, const Command&);
+		void Mode(Client&, const Command&);
 };

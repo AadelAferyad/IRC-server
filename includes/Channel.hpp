@@ -9,6 +9,9 @@ class Channel
     private:
         std::string name;
         std::string topic;
+        bool inviteOnly;
+        bool topicRestricted;
+        bool keyProtected;
         std::set<int> clients;
         std::set<int> operators;
         std::set<int> invited;
@@ -25,6 +28,8 @@ class Channel
         bool hasClient(int fd) const;
 
         const std::set<int> &getClients() const;
+        
+        void promoteNewOperator();
 
         void addOperator(int fd);
         void removeOperator(int fd);
@@ -33,8 +38,15 @@ class Channel
         void addInvite(int fd);
         void removeInvite(int fd);
         bool isInvited(int fd) const;
-        
-        void promoteNewOperator();
+                
+        bool isInviteOnly() const;
+        void setInviteOnly(bool enabled);
+
+        bool isTopicRestricted() const;
+        void setTopicRestricted(bool enabled);
+
+        bool isKeyProtected() const;
+        void setKeyProtected(bool enabled);
 };
 
 #endif

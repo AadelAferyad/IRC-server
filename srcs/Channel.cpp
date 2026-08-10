@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string& name) : name(name) {}
+Channel::Channel(const std::string& name) : name(name), inviteOnly(false), topicRestricted(false), keyProtected(false) {}
 Channel::~Channel() {}
 
 const std::string& Channel::getName() const
@@ -72,4 +72,34 @@ void Channel::promoteNewOperator()
     if (clients.empty())
         return ;
     operators.insert(*clients.begin());
+}
+
+bool Channel::isInviteOnly() const
+{
+    return inviteOnly;
+}
+
+void Channel::setInviteOnly(bool value)
+{
+    inviteOnly = value;
+}
+
+bool Channel::isTopicRestricted() const
+{
+    return topicRestricted;
+}
+
+void Channel::setTopicRestricted(bool value)
+{
+    topicRestricted = value;
+}
+
+bool Channel::isKeyProtected() const
+{
+    return keyProtected;
+}
+
+void Channel::setKeyProtected(bool value)
+{
+    keyProtected = value;
 }
