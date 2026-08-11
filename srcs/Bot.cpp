@@ -13,7 +13,7 @@ std::string Bot::getHelp() const
 
 std::string Bot::getCommands() const
 {
-    return "IRC commands: PASS NICK USER JOIN PART PRIVMSG NOTICE KICK INVITE TOPIC MODE QUIT";
+    return "IRC commands: PASS NICK USER JOIN PART PRIVMSG KICK INVITE TOPIC MODE QUIT";
 }
 
 std::string Bot::getUsage(const std::string &command) const
@@ -30,8 +30,6 @@ std::string Bot::getUsage(const std::string &command) const
         return "PART <#channel> [:<reason>]";
     if (command == "PRIVMSG")
         return "PRIVMSG <target> :<message>";
-    if (command == "NOTICE")
-        return "NOTICE <target> :<message>";
     if (command == "KICK")
         return "KICK <#channel> <nickname> [:<reason>]";
     if (command == "INVITE")
