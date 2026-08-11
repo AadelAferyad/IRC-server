@@ -348,6 +348,24 @@ operator privileges are transferred and empty channels are destroyed.
 | 473 | `ERR_INVITEONLYCHAN` | Channel is invite-only (`+i`) |
 | 475 | `ERR_BADCHANNELKEY` | Wrong or missing channel key (`+k`) |
 | 482 | `ERR_CHANOPRIVSNEEDED` | Operator privileges required |
+## Bonus — ircBot
+ 
+`ircBot` is a help bot built into the server: it is not a separate program and
+not a real connection, it is a `Bot` object owned by the `server` instance. Every
+`PRIVMSG` goes through it, and when the text is one of its `!` triggers the bot
+answers with a `PRIVMSG` sent from `ircBot!bot@localhost`. Its purpose is to act
+as an in-chat manual: a user who does not remember the syntax of a command can
+ask the bot instead of leaving the client.
+ 
+### Bot commands
+ 
+| Trigger | Description |
+| --- | --- |
+| `!help` | Lists the bot's own triggers. |
+| `!commands` | Lists every IRC command the server implements. |
+| `!usage <command>` | Prints the syntax of one IRC command (e.g. `!usage MODE`). |
+| `!about` | Prints a one-line description of the bot. |
+
 
 ## Technical choices
 
