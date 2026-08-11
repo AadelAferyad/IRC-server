@@ -1,4 +1,4 @@
-NAME = IRC
+NAME = ircserv
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I includes
 SOURCE =	srcs/main.cpp srcs/Server.cpp srcs/Client.cpp srcs/Dispatcher.cpp srcs/Channel.cpp srcs/Replies.cpp\
