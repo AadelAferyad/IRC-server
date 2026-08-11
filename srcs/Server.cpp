@@ -315,14 +315,20 @@ void server::enablePollOut(struct pollfd &fd)
 	fd.events |= POLLOUT;
 }
 
-void	server::closeFds()
+void server::closeFds()
 {
-	for (size_t i = 0; i < clients.size(); i++)
+	for (std::map<int, Client>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
-		close(clients[i].getClientFd());
+		if (it->first != -1)
+			close(it->first);
 	}
-	if (this->socketFd != -1)
+	if (socketFd != -1)
+	{
 		close(socketFd);
+		socketFd = -1;
+	}
+	clients.clear();
+	fds.clear();
 	std::cout << RED << "Server Disconnected" << WHITE << std::endl;
 }
 
