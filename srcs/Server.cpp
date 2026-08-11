@@ -1,6 +1,7 @@
 #include "Server.hpp"
 
 server::server(){};
+bool server::sig = true;
 bool isValidPort(std::string &str)
 {
 	if (str.empty())
@@ -13,14 +14,28 @@ bool isValidPort(std::string &str)
 	long value = std::atol(str.c_str());
 	return (value > 0 && value <= 65535);
 }
+int	server::getFlag() const
+{
+	return (flag);
+}
 server::server(std::string port, std::string pass)
 {
 	if (!isValidPort(port))
-		throw std::runtime_error("Error invalid port");
-	if (pass.empty())
-		throw std::runtime_error("Error invalid password empty");
-	this->port = std::atoi(port.c_str());
-	this->password = pass;
+	{
+		std::cerr << "Error invalid port" << std::endl;
+		flag = 1;
+	}
+	else if (pass.empty())
+	{
+		std::cerr << "Error invalid password empty" << std::endl;
+		flag = 1;
+	}
+	else
+	{
+		this->port = std::atoi(port.c_str());
+		this->password = pass;
+		flag = 0;
+	}
 }
 server::server(const server &obj) { (void) obj;};
 server &server::operator=(const server &obj)
@@ -107,7 +122,8 @@ void	server::sendData(struct pollfd &fd)
     	std::cout << "send() returned " << bytes << std::endl;
 	if (bytes < 0)
 	{
-		return ; // ERROR SHOULD BE HANDLED ..
+		std::cerr << "Error sending" << std::endl;
+		return ;
 	}
 	buff.erase(0, bytes);
 	if (buff.empty())
@@ -119,13 +135,15 @@ void server::run()
     std::cout << "\033[2J\033[H" << std::flush;
     std::cout << GREEN << "			Server created" << WHITE << std::endl;
 
-    while (true)
+    while (server::sig)
     {
         int ready = poll(&fds[0], fds.size(), -1);
-
         if (ready == -1)
+	{
+		if (errno == EINTR)
+			continue;
             throw std::runtime_error("Failed to execute poll");
-
+	}
         for (size_t i = 0; i < fds.size();)
         {
             if (fds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
@@ -139,7 +157,6 @@ void server::run()
                     continue;
                 }
             }
-
             if (fds[i].revents & POLLIN)
             {
                 if (fds[i].fd == this->socketFd)
@@ -154,18 +171,21 @@ void server::run()
                         continue;
                 }
             }
-
             if (i >= fds.size())
                 break;
-
             if (fds[i].revents & POLLOUT)
                 sendData(fds[i]);
-
             ++i;
         }
     }
-
     closeFds();
+}
+
+void	server::sigHandler(int signum)
+{
+	(void)signum;
+	std::cout << "Catched the signal\n" ;
+	server::sig = false;
 }
 
 void	server::acceptNewCLient()

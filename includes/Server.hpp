@@ -23,6 +23,7 @@
 #include "Dispatcher.hpp"
 #include "Channel.hpp"
 #include "Numeric.hpp"
+#include <cerrno>
 
 typedef struct Command 
 {
@@ -40,6 +41,8 @@ class server
 		std::vector<struct pollfd> 		fds;
 		std::map<int, Client> 			clients;
 		std::map<std::string, Channel>	channels;
+		static	bool	sig;
+		int	flag;
 		// dispatcher part
 		Dispatcher                  	dispatcher;
 		void                        	checkRegistration(Client& client);
@@ -50,6 +53,7 @@ class server
 		server &operator=(const server &obj);
 		~server();
 
+		static void	sigHandler(int signum);
 		void	initServer();
 		void	createSocket();
 		void	configSocket();
@@ -78,6 +82,7 @@ class server
 		void 	Kick(Client&, const Command&);
 		void 	Mode(Client&, const Command&);
 
+		int	getFlag() const;
 		void	queueMsg(int fd, const std::string &msg);
 		void	sendNumeric(Client &client, int numeric, const std::string &params, const std::string &message);
 };
