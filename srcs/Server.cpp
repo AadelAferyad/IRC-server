@@ -352,3 +352,18 @@ void server::sendNumeric(Client &client, int numeric, const std::string &params,
     oss << "\r\n";
     queueMsg(client.getFd(), oss.str());
 }
+
+void server::sendToChannel(const std::string &channelName, const std::string &message)
+{
+	std::map<std::string, Channel>::iterator channel = channels.find(channelName);
+	if (channel == channels.end())
+		return ;
+
+	const std::set<int> &members = channel->second.getClients();
+	for (std::set<int>::const_iterator member = members.begin(); member != members.end(); ++member)
+	{
+		if (clients.find(*member) == clients.end())
+			continue ;
+		queueMsg(*member, message);
+	}
+}

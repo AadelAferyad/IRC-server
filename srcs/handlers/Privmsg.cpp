@@ -9,9 +9,7 @@ void server::Privmsg(Client &client, const Command &command)
     }
     if (command.params.size() < 2)
     {
-        sendNumeric(client, ERR_NEEDMOREPARAMS,
-            client.getNickname() + " PRIVMSG",
-            "Not enough parameters");
+        sendNumeric(client, ERR_NEEDMOREPARAMS, client.getNickname() + " PRIVMSG", "Not enough parameters");
         return ;
     }
 
@@ -31,6 +29,8 @@ void server::Privmsg(Client &client, const Command &command)
             sendNumeric(client, ERR_CANNOTSENDTOCHAN, client.getNickname() + " " + target, "Cannot send to channel");
             return ;
         }
+        if (bot.handleCommand(*this, client, target, message))
+			return ;
         const std::set<int> &members = it->second.getClients();
         for (std::set<int>::const_iterator member = members.begin(); member != members.end(); ++member)
         {

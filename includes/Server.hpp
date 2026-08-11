@@ -23,6 +23,7 @@
 #include "Dispatcher.hpp"
 #include "Channel.hpp"
 #include "Numeric.hpp"
+#include "Bot.hpp"
 #include <cerrno>
 
 typedef struct Command 
@@ -45,6 +46,7 @@ class server
 		int	flag;
 		// dispatcher part
 		Dispatcher                  	dispatcher;
+		Bot                             bot;
 		void                        	checkRegistration(Client& client);
 	public:
 		server();
@@ -54,35 +56,36 @@ class server
 		~server();
 
 		static void	sigHandler(int signum);
-		void	initServer();
-		void	createSocket();
-		void	configSocket();
-		void	bindSocket();
-		void	passiveSocket();
-		void	run();
-		void	acceptNewCLient();
-		int		readData(int fd);
-		void	clearClient(int fd);
-		void	closeFds();
-		Command	parse(std::string &);
-		void	enablePollOut(struct pollfd &fd);
-		void	sendData(struct pollfd &fd);
+		void		initServer();
+		void		createSocket();
+		void		configSocket();
+		void		bindSocket();
+		void		passiveSocket();
+		void		run();
+		void		acceptNewCLient();
+		int			readData(int fd);
+		void		clearClient(int fd);
+		void		closeFds();
+		Command		parse(std::string &);
+		void		enablePollOut(struct pollfd &fd);
+		void		sendData(struct pollfd &fd);
 
 		// cmd handlers
-		void 	Pass(Client&, const Command&);
-		void 	Nick(Client&, const Command&);
-		bool 	nicknameExists(const std::string&);
-		void 	User(Client&, const Command&);
-		void 	Join(Client&, const Command&);
-		void 	Part(Client&, const Command&);
-		void 	Privmsg(Client&, const Command&);
-		void 	Quit(Client&, const Command&);
-		void 	Topic(Client&, const Command&);
-		void 	Invite(Client&, const Command&);
-		void 	Kick(Client&, const Command&);
-		void 	Mode(Client&, const Command&);
+		void 		Pass(Client&, const Command&);
+		void 		Nick(Client&, const Command&);
+		bool 		nicknameExists(const std::string&);
+		void 		User(Client&, const Command&);
+		void 		Join(Client&, const Command&);
+		void 		Part(Client&, const Command&);
+		void 		Privmsg(Client&, const Command&);
+		void 		Quit(Client&, const Command&);
+		void 		Topic(Client&, const Command&);
+		void 		Invite(Client&, const Command&);
+		void 		Kick(Client&, const Command&);
+		void 		Mode(Client&, const Command&);
 
-		int	getFlag() const;
-		void	queueMsg(int fd, const std::string &msg);
-		void	sendNumeric(Client &client, int numeric, const std::string &params, const std::string &message);
+		int			getFlag() const;
+		void		queueMsg(int fd, const std::string &msg);
+		void		sendNumeric(Client &client, int numeric, const std::string &params, const std::string &message);
+		void		sendToChannel(const std::string &channelName, const std::string &message);
 };
