@@ -32,7 +32,7 @@ What the server does:
 
 | File / directory | Role |
 | --- | --- |
-| `srcs/main.cpp` | Entry point, argument checking (`./IRC <port> <password>`). |
+| `srcs/main.cpp` | Entry point, argument checking (`./ircserv <port> <password>`). |
 | `srcs/Server.cpp` | Socket setup, `poll()` loop, accept / read / send, message framing on `\r\n`, command parsing, numeric replies. |
 | `srcs/Client.cpp` | Per-client state: fd, registration flags, nickname/username/realname, input and output buffers. |
 | `srcs/Channel.cpp` | Per-channel state: members, operators, invite list, topic, modes (`+i`, `+t`, `+k`, `+l`). |
@@ -71,7 +71,7 @@ cd IRC-server
 make
 ```
 
-This produces the `IRC` binary at the root of the repository.
+This produces the `ircserv` binary at the root of the repository.
 The project compiles with `-Wall -Wextra -Werror -std=c++98`.
 
 Other rules:
