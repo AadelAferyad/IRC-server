@@ -119,7 +119,6 @@ void	server::sendData(struct pollfd &fd)
 	}
 	std::string	&buff = clients[fd.fd].getOutBuffer();
 	ssize_t bytes = send(fd.fd, buff.c_str(), buff.size(), 0);
-    	std::cout << "send() returned " << bytes << std::endl;
 	if (bytes < 0)
 	{
 		std::cerr << "Error sending" << std::endl;
@@ -184,7 +183,6 @@ void server::run()
 void	server::sigHandler(int signum)
 {
 	(void)signum;
-	std::cout << "Catched the signal\n" ;
 	server::sig = false;
 }
 
